@@ -48,6 +48,23 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll((float)yoffset);
 }
+std::vector<glm::vec3> cubePositions = {
+	glm::vec3(0.0f, 0.0f, 0.0f),
+	glm::vec3(2.0f, 5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f, 3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f, 2.0f, -2.5f),
+	glm::vec3(1.5f, 0.2f, -1.5f),
+	glm::vec3(-1.3f, 1.0f, -1.5f)
+};
+void spawn()
+{
+		
+	cubePositions.push_back(camera.getPosition() + (camera.getFront()* glm::vec3(2.0f)));
+}
 void processInput(GLFWwindow* window)
 {
 	float currentFrame = (float)glfwGetTime();
@@ -63,6 +80,13 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera.ProcessKeyboard(UP, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera.ProcessKeyboard(DOWN, deltaTime);
+	
+}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_E && action == GLFW_PRESS) spawn();
 }
 int main()
 {
@@ -86,6 +110,7 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, key_callback);
 
 	/*float vertices[] = {
 		//positions        //colors          //texture coords
@@ -131,18 +156,6 @@ int main()
 0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
 -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
 -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
-	};
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f)
 	};
 
 	unsigned int indices[] = {
@@ -227,13 +240,13 @@ int main()
 
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(fov),800.0f/600.0f, 0.1f, 100.0f);
+	//projection = glm::perspective(glm::radians(fov),800.0f/600.0f, 0.1f, 100.0f);
 	
 	unsigned int transloc = glGetUniformLocation(shader.ID,"transform");
 	double scale = 0;
@@ -272,7 +285,7 @@ int main()
 
 		glBindVertexArray(VAO);
 		//glDrawElements(GL_TRIANGLES,6, GL_UNSIGNED_INT,0);
-		for (unsigned int i = 0; i < 10; i++) {
+		for (unsigned int i = 0; i < cubePositions.size(); i++) {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
@@ -280,6 +293,10 @@ int main()
 			shader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, camera.getPosition());
+		shader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES,0,36);
 		
 		/*
 		scale = ((double)sin(glfwGetTime())+1)/2; 
