@@ -175,6 +175,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.shader" />
+    <None Include="lightfragment.shader" />
+    <None Include="lightvertex.shader" />
+    <None Include="sourcelightfragment.shader" />
+    <None Include="sourcelightvertex.shader" />
     <None Include="vertex.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
