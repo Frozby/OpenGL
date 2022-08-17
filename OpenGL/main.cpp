@@ -8,11 +8,15 @@
 #include "stb_image.h"
 #include "camera.h"
 
+
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_HEIGHT = 960;
+
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
+glm::vec3 lightPos(1.2f, 2.0f, -2.0f);
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -99,7 +103,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = glfwCreateWindow(800, 600, "openGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "openGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -332,7 +336,6 @@ int main()
 	double scale = 0;
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
-	lightshader.setVec3("lightPos", lightPos.x,lightPos.y,lightPos.z);
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -347,8 +350,10 @@ int main()
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		lightPos = glm::vec3(5 * glm::sin((float)glfwGetTime()), lightPos.y, 5 * glm::cos((float)glfwGetTime()));
 		sourcelightshader.use();
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
 
 		int modelLoc = glGetUniformLocation(sourcelightshader.ID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -358,11 +363,10 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 		int projectionLoc = glGetUniformLocation(sourcelightshader.ID, "projection");
-		projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos);
+
 		//model = glm::scale(model, glm::vec3(0.2f));
 		glBindVertexArray(sourcelightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -373,6 +377,8 @@ int main()
 		lightshader.use();
 		lightshader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightshader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightshader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+		lightshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
 		/*shader.use();
 		shader.setInt("texture1", 0);
 		shader.setInt("texture2", 1);
@@ -386,7 +392,7 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		
 		projectionLoc = glGetUniformLocation(lightshader.ID, "projection");
-		projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glActiveTexture(GL_TEXTURE0);
@@ -399,17 +405,20 @@ int main()
 		/*for (unsigned int i = 0; i < cubePositions.size(); i++) {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			//float angle = 20.0f * i;
+			//float angle = 20.0f * i; 
 			//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f,0.3f,0.5f));
 			shader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}*/
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f,0.0f,-5.0f));
+		/*glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, (camera.Position+camera.Front*glm::vec3(4.0f)));
 		lightshader.setMat4("model", model);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES,0,36);
-		
+		glDrawArrays(GL_TRIANGLES,0,36);*/
+		model = glm::mat4(1.0f);
+		lightshader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		/*
 		scale = ((double)sin(glfwGetTime())+1)/2; 
 		
