@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="gl.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main2.cpp" />
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

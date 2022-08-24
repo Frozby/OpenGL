@@ -88,7 +88,6 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera.ProcessKeyboard(UP, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera.ProcessKeyboard(DOWN, deltaTime);
-	
 }
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -350,7 +349,7 @@ int main()
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		lightPos = glm::vec3(5 * glm::sin((float)glfwGetTime()), lightPos.y, 5 * glm::cos((float)glfwGetTime()));
+		//lightPos = glm::vec3(5 * glm::sin((float)glfwGetTime()), lightPos.y, 5 * glm::cos((float)glfwGetTime()));
 		sourcelightshader.use();
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -372,13 +371,25 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 2.3f);
 
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
 
 		lightshader.use();
-		lightshader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		lightshader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lightshader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
 		lightshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
+		lightshader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		lightshader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		lightshader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		lightshader.setFloat("material.shininess", 32.0f);
+		lightshader.setVec3("light.ambient",ambientColor.x,ambientColor.y,ambientColor.z);
+		lightshader.setVec3("light.diffuse", diffuseColor.x,diffuseColor.y,diffuseColor.z); // darkened
+		lightshader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
 		/*shader.use();
 		shader.setInt("texture1", 0);
 		shader.setInt("texture2", 1);
