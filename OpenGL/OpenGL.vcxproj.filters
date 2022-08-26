@@ -24,6 +24,9 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -41,6 +44,18 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="fragment.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lightvertex.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lightfragment.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="sourcelightvertex.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="sourcelightfragment.shader">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
