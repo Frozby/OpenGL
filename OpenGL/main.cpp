@@ -78,8 +78,8 @@ void processInput(GLFWwindow* window)
 
 int main() {
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "openGL", NULL, NULL);
@@ -91,6 +91,7 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 	gladLoadGL((GLADloadfunc)glfwGetProcAddress);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -213,7 +214,7 @@ int main() {
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
 
-		sourcelightshader.use();
+		/*sourcelightshader.use();
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -224,19 +225,23 @@ int main() {
 		sourcelightshader.setMat4("projection", projection);
 
 		glBindVertexArray(sourcelightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 		lightshader.use();
-		lightshader.setVec3("light.position", lightPos.x,lightPos.y,lightPos.z);
-		//lightshader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		lightshader.setVec3("light.position", camera.Position.x,camera.Position.y,camera.Position.z);
+		lightshader.setVec3("light.direction", camera.Front.x,camera.Front.y,camera.Front.z);
+		lightshader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		lightshader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 		lightshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
 		
 		lightshader.setMat4("projection", projection);
 		lightshader.setMat4("view", view);
 
-		lightshader.setVec3("light.ambient", 0.3f,0.3f,0.3f);
+		lightshader.setVec3("light.ambient", 0.2f,0.2f,0.2f);
 		lightshader.setVec3("light.diffuse", 0.7f,0.7f,0.7f); // darkened
 		lightshader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+
 
 		lightshader.setFloat("light.constant", 1.0f);
 		lightshader.setFloat("light.linear", 0.045f);
