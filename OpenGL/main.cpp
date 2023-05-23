@@ -7,6 +7,9 @@
 #include "shader.h"
 #include "stb_image.h"
 #include "camera.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 unsigned int loadTexture(const char* path);
 //         SETTINGS
