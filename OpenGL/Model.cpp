@@ -26,3 +26,13 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 {
 
 }
+
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+{
+    return Mesh();
+}
+
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+{
+    return std::vector<Texture>();
+}
